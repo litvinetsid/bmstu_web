@@ -5,3 +5,5 @@ backend/dist
 temp
 .DS_Store
 */.DS_Store
+backend/server.cert
+backend/server.key
