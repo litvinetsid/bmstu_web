@@ -1,48 +1,70 @@
 <template>
-  <div class="dish-page">
+  <div class="dish-page page-container">
     <h1>Dishes</h1>
-    <button @click="showAddDishModal = true">Add New Dish</button>
-    <div v-if="dishes.length">
-      <DishItem v-for="dish in dishes" :key="dish.id" :dish="dish" />
+    <center><button @click="showDishModal = true">Add New Dish</button></center>
+    <div v-if="dishes.length" class="dish-list">
+      <DishItem 
+        v-for="dish in dishes" 
+        :key="dish.id" 
+        :dish="dish" 
+        @click="openEditDishModal(dish)" 
+        @delete-dish="deleteDish" 
+      />
     </div>
     <p v-else>No dishes available</p>
 
-    <div v-if="showAddDishModal" class="modal">
-      <h2>Add Dish</h2>
-      <form @submit.prevent="addDish">
-        <div>
-          <label for="name">Name:</label>
-          <input id="name" v-model="newDish.name" type="text" required />
-        </div>
-        <div>
-          <label for="type">Type:</label>
-          <select id="type" v-model="newDish.type" required>
-            <option value="салат">Салат</option>
-            <option value="первое">Первое</option>
-            <option value="второе">Второе</option>
-            <option value="напиток">Напиток</option>
-            <option value="десерт">Десерт</option>
-          </select>
-        </div>
-        <button type="submit">Add</button>
-        <button type="button" @click="showAddDishModal = false">Cancel</button>
-      </form>
+    <!-- Add/Edit Dish Modal -->
+    <div v-if="showDishModal" class="modal-overlay" @click.self="closeDishModal">
+      <div class="modal">
+        <h2>{{ isEditing ? 'Edit Dish' : 'Add Dish' }}</h2>
+        <form @submit.prevent="submitDish">
+          <div>
+            <label for="name">Name:</label>
+            <input id="name" v-model="currentDish.name" type="text" required />
+          </div>
+          <div>
+            <label for="type">Type:</label>
+            <select id="type" v-model="currentDish.type" required>
+              <option value="salad">salad</option>
+              <option value="starter">starter</option>
+              <option value="main course">main course</option>
+              <option value="drink">drink</option>
+              <option value="dessert">dessert</option>
+            </select>
+          </div>
+          <div class="modal-buttons">
+            <button type="submit">{{ isEditing ? 'Update' : 'Add' }}</button>
+            <button type="button" @click="closeDishModal">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref } from 'vue';
-import { fetchDishes, createDish } from '../services/dishService';
+import { useRoute } from 'vue-router';
+import {
+  fetchDishes,
+  createDish,
+  updateDishService,
+  deleteDishService,
+} from '../services/dishService';
 import DishItem from '../components/DishItem.vue';
+import { toast } from 'vue3-toastify';
 
 export default defineComponent({
   name: 'DishPage',
   components: { DishItem },
   setup() {
     const dishes = reactive<Array<{ id: string; name: string; type: string }>>([]);
-    const newDish = reactive<{ name: string; type: string }>({ name: '', type: '' });
-    const showAddDishModal = ref(false);
+    const currentDish = reactive<{ id?: string; name: string; type: string }>({
+      name: '',
+      type: '',
+    });
+    const showDishModal = ref(false);
+    const isEditing = ref(false);
 
     const loadDishes = async () => {
       const response = await fetchDishes();
@@ -52,56 +74,105 @@ export default defineComponent({
     };
 
     const addDish = async () => {
-      const response = await createDish(newDish);
-      if (response.success) {
-        dishes.push(response.data);
-        showAddDishModal.value = false;
-        newDish.name = '';
-        newDish.type = '';
-      } else {
-        alert('Failed to add dish. Please try again.');
+      try {
+        const response = await createDish(currentDish);
+        if (response.success) {
+          dishes.push(response.data);
+          closeDishModal();
+          toast.success('Dish added successfully');
+        } else {
+          throw new Error('Failed to add dish');
+        }
+      } catch (error) {
+        toast.error(error || 'Error adding dish');
       }
     };
 
-    onMounted(loadDishes);
+    const updateDish = async () => {
+      if (!currentDish.id) return;
+      try {
+        const response = await updateDishService(currentDish.id, currentDish);
+        if (response.success) {
+          const index = dishes.findIndex((dish) => dish.id === currentDish.id);
+          if (index !== -1) {
+            dishes[index] = response.data;
+          }
+          closeDishModal();
+          toast.success('Dish updated successfully');
+        } else {
+          throw new Error('Failed to update dish');
+        }
+      } catch (error) {
+        toast.error(error || 'Error updating dish');
+      }
+    };
 
-    return { dishes, newDish, showAddDishModal, addDish };
+    const deleteDish = async (id?: string) => {
+      if (!id) return;
+      try {
+        const response = await deleteDishService(id);
+        if (response.success) {
+          const index = dishes.findIndex((dish) => dish.id === id);
+          if (index !== -1) {
+            dishes.splice(index, 1);
+          }
+          toast.success('Dish deleted successfully');
+        } else {
+          throw new Error('Failed to delete dish');
+        }
+      } catch (error) {
+        toast.error(error || 'Error deleting dish');
+      }
+    };
+
+    const openEditDishModal = (dish: { id: string; name: string; type: string }) => {
+      Object.assign(currentDish, dish);
+      isEditing.value = true;
+      showDishModal.value = true;
+    };
+
+    const closeDishModal = () => {
+      Object.assign(currentDish, { name: '', type: '' });
+      isEditing.value = false;
+      showDishModal.value = false;
+    };
+
+    const submitDish = async () => {
+      if (isEditing.value) {
+        await updateDish();
+      } else {
+        await addDish();
+      }
+    };
+
+    const route = useRoute();
+    const loadDishFromRoute = () => {
+      const dishId = route.params.id as string;
+      if (dishId) {
+        const dish = dishes.find((d) => d.id == dishId);
+        if (dish) {
+          openEditDishModal(dish);
+        }
+      }
+    };
+
+    onMounted(async () => {
+      await loadDishes();
+      loadDishFromRoute();
+    });
+
+    return {
+      dishes,
+      currentDish,
+      showDishModal,
+      isEditing,
+      addDish,
+      updateDish,
+      deleteDish,
+      openEditDishModal,
+      closeDishModal,
+      submitDish,
+    };
   },
 });
 </script>
-
-<style scoped>
-.dish-page {
-  padding: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.modal h2 {
-  margin-top: 0;
-}
-
-.modal form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.modal form div {
-  display: flex;
-  flex-direction: column;
-}
-
-.modal button {
-  margin-top: 10px;
-}
-</style>

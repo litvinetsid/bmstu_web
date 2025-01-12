@@ -29,3 +29,19 @@ export const createDish = async (dish: { name: string; type: string; }) => {
   });
   return response.json();
 };
+
+export const deleteDishService = async (dishId: string) => {
+  const response = await fetch(`${API_URL}/${dishId}`, {
+    method: 'DELETE',
+  });
+  return response.json();
+};
+
+export const updateDishService = async (dishId: string, dish: { name: string; type: string }) => {
+  const response = await fetch(`${API_URL}/${dishId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dish),
+  });
+  return response.json();
+};

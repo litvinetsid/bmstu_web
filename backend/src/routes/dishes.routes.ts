@@ -2,10 +2,10 @@ import { Router } from 'express';
 import {
   getDishes,
   createDish,
+  updateDish,
+  deleteDish,
   addDishToMenu,
   removeDishFromMenu,
-  moveDishBetweenMenus,
-  checkDishConstraints,
 } from '../controllers/dishes.controller';
 
 const router = Router();
@@ -23,27 +23,30 @@ router.get('/', getDishes);
 router.post('/', createDish);
 
 /**
- * POST /api/v1/menus/:menuId/dishes
+ * PUT /api/v1/dishes/:id
+ * Обновить информацию о блюде
+ */
+router.put('/:id', updateDish);
+
+/**
+ * DELETE /api/v1/dishes/:id
+ * Удалить блюдо
+ */
+router.delete('/:id', deleteDish);
+
+/**
+ * POST /api/v1/dishes/:menuId/dishes
  * Добавить блюдо в меню
  */
 router.post('/menus/:menuId/dishes', addDishToMenu);
 
 /**
- * DELETE /api/v1/menus/:menuId/dishes/:dishId
+ * DELETE /api/v1/dishes/:menuId/dishes
  * Удалить блюдо из меню
  */
-router.delete('/menus/:menuId/dishes/:dishId', removeDishFromMenu);
 
-/**
- * POST /api/v1/menus/:fromMenuId/dishes/:dishId/move
- * Переместить блюдо между меню
- */
-router.post('/menus/:fromMenuId/dishes/:dishId/move', moveDishBetweenMenus);
+router.post('/menus/:menuId/dishes', removeDishFromMenu);
 
-/**
- * POST /api/v1/menus/:menuId/dishes/check
- * Проверить ограничения на добавление блюда
- */
-router.post('/menus/:menuId/dishes/check', checkDishConstraints);
+
 
 export default router;

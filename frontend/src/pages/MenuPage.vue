@@ -1,54 +1,45 @@
 <template>
   <div class="menu-page">
     <h1>Menus</h1>
-    <button @click="showCreateMenuModal">Add New Menu</button>
+    <center><button @click="showCreateMenuModal">Add New Menu</button></center>
 
     <div class="menu-grid">
       <div class="column" v-for="menu in groupedMenus" :key="menu.day">
-        <div class="menu-item" v-for="item in menu.items" :key="item.id">
-          <h3>{{ item.day }} - {{ item.variant }}</h3>
-          <ul>
-            <li
-              v-for="dish in item.dishes"
-              :key="dish.id"
-              draggable="true"
-              @dragstart="onDragStart(dish, item.id)"
-              @dragover.prevent
-              @drop="onDrop(item.id)"
-            >
-              {{ dish.name }} ({{ dish.type }})
-            </li>
-          </ul>
-          <button @click="editMenu(item)">Edit</button>
-          <button @click="deleteMenu(item.id)">Delete</button>
-        </div>
+        <MenuItem v-for="item in menu.items" :key="item.id" :menu="item" :onDragStart="onDragStart" :onDrop="onDrop"
+          :removeDish="removeDishFromMenu" :editMenu="editMenu" :deleteMenu="deleteMenu"
+          @navigateToDish="navigateToDish" />
+
+
       </div>
     </div>
 
-    <div v-if="showModal" class="modal">
-      <h2>{{ isEdit ? 'Edit Menu' : 'Create Menu' }}</h2>
-      <form @submit.prevent="submitMenu">
-        <label>
-          Day:
-          <input v-model="menuForm.day" type="text" required />
-        </label>
-        <label>
-          Variant:
-          <input v-model="menuForm.variant" type="text" required />
-        </label>
-        <label>
+    <div class="modal-overlay" @click.self="closeModal" v-if="showModal">
+      <div class="modal">
+        <h2>{{ isEdit ? 'Edit Menu' : 'Create Menu' }}</h2>
+        <form @submit.prevent="submitMenu">
+          <label>
+            Day:
+            <input v-model="menuForm.day" type="text" required />
+          </label>
+          <label>
+            Variant:
+            <input v-model="menuForm.variant" type="text" required />
+          </label>
+          <button type="submit">{{ isEdit ? 'Update' : 'Create' }}</button>
+          <button type="button" @click="closeModal">Cancel</button>
+        </form>
+        <label v-if="isEdit">
           Add Dishes:
           <select v-model="selectedDish">
             <option v-for="dish in availableDishes" :value="dish.id" :key="dish.id">
               {{ dish.name }}
             </option>
           </select>
-          <button type="button" @click="addDishToMenu">Add Dish</button>
+          <button type="button" class="add-dish-button" @click="addDishToMenu">Add Dish</button>
         </label>
-        <button @click="submitMenu">{{ isEdit ? 'Update' : 'Create' }}</button>
-        <button @click="closeModal">Cancel</button>
-      </form>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -56,6 +47,7 @@
 import { defineComponent, reactive, ref, computed } from 'vue';
 import { useMenuStore } from '../store/menus';
 import { fetchDishes } from '../services/dishService';
+import { useRouter } from 'vue-router';
 import MenuItem from '../components/MenuItem.vue';
 import { toast } from 'vue3-toastify';
 
@@ -64,6 +56,7 @@ export default defineComponent({
   components: { MenuItem },
   setup() {
     const menuStore = useMenuStore();
+    const router = useRouter();
     const dishes = ref<{ id: string; name: string; type: string }[]>([]);
 
     const menuForm = reactive({ day: '', variant: '' });
@@ -78,17 +71,42 @@ export default defineComponent({
       return dishes.value.filter((dish) => !currentMenu?.dishes.some((d) => d.id === dish.id));
     });
 
+    const DishTypeOrder = ['salad', 'starter', 'main course', 'drink', 'dessert'];
+
+    const getDishTypeOrderIndex = (type: string): number => {
+      const index = DishTypeOrder.indexOf(type);
+      return index !== -1 ? index : DishTypeOrder.length;
+    };
+
     const groupedMenus = computed(() =>
       menuStore.menus.reduce((columns: { day: string; items: any[] }[], menu) => {
+        if (!menu.day) return columns;
+
+        const sortedDishes = [...menu.dishes].sort(
+          (a, b) => getDishTypeOrderIndex(a.type) - getDishTypeOrderIndex(b.type)
+        );
+
         const column = columns.find((col) => col.day === menu.day);
         if (!column) {
-          columns.push({ day: menu.day, items: [menu] });
+          columns.push({ day: menu.day, items: [{ ...menu, dishes: sortedDishes }] });
         } else {
-          column.items.push(menu);
+          column.items.push({ ...menu, dishes: sortedDishes });
         }
         return columns;
       }, [])
     );
+
+    const updateDishOrder = (menuId: string) => {
+      const menu = menuStore.menus.find((m) => m.id === menuId);
+      if (menu) {
+        menu.dishes.sort((a, b) => getDishTypeOrderIndex(a.type) - getDishTypeOrderIndex(b.type));
+      }
+    };
+
+    const navigateToDish = (dishId: string) => {
+      router.push(`/dishes/${dishId}`);
+    };
+
 
     const draggedDish = ref<{ dishId: string; fromMenuId: string } | null>(null);
 
@@ -134,9 +152,19 @@ export default defineComponent({
       if (!currentMenuId.value) return;
       try {
         await menuStore.addDishToMenu(currentMenuId.value, selectedDish.value);
+        updateDishOrder(currentMenuId.value);
         toast.success('Dish added successfully');
+      } catch (error) {
+        toast.error(error);
+      }
+    };
+
+    const removeDishFromMenu = async (menuId: string, dishId: string) => {
+      try {
+        await menuStore.removeDishFromMenu(menuId, dishId);
+        toast.success('Dish removed successfully');
       } catch {
-        toast.error('Failed to add dish');
+        toast.error('Failed to remove dish');
       }
     };
 
@@ -149,21 +177,21 @@ export default defineComponent({
 
       const { dishId, fromMenuId } = draggedDish.value;
 
-      const success = await menuStore.moveDish(fromMenuId, toMenuId, dishId);
-      if (success) {
-        if (toast && toast.success) {
-  toast.success('Dish moved successfully');
-} else {
-  console.error('Toast is not initialized or success method is missing');
-}
+      try {
+        const success = await menuStore.moveDish(fromMenuId, toMenuId, dishId);
 
-      } else {
-        toast.error('Failed to move dish');
+        if (success) {
+          toast.success('Dish moved successfully');
+        } else {
+          toast.error('Failed to move dish');
+        }
+      } catch (error) {
+        console.error('Error moving dish:', error);
+        toast.error('An error occurred while moving the dish');
+      } finally {
+        draggedDish.value = null;
       }
-
-      draggedDish.value = null; // Очистить переменную после перемещения
     };
-
 
     const closeModal = () => {
       showModal.value = false;
@@ -191,42 +219,12 @@ export default defineComponent({
       submitMenu,
       deleteMenu,
       addDishToMenu,
+      removeDishFromMenu,
       closeModal,
       onDragStart,
       onDrop,
+      navigateToDish,
     };
   },
 });
 </script>
-
-<style scoped>
-.menu-page {
-  padding: 20px;
-}
-
-.menu-item {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-}
-
-.menu-grid {
-  display: flex;
-  gap: 10px;
-}
-
-.column {
-  flex: 1;
-}
-
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-</style>

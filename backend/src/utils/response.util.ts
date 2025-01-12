@@ -6,14 +6,13 @@
  * @returns Унифицированный объект ответа
  */
 export const createResponse = (
-    success: boolean,
-    data: any,
-    meta: object = {}
-  ): { success: boolean; data: any; meta: object } => {
-    return {
-      success,
-      data,
-      meta,
-    };
+  success: boolean,
+  data: any,
+  meta: object = {}
+): { success: boolean; data: any; meta: object } => {
+  return {
+    success,
+    data,
+    meta,
   };
-  
+};

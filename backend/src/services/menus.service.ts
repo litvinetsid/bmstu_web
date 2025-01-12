@@ -1,20 +1,24 @@
-import db from '../db'; // Подключение Knex
-import { Menu } from '../models/menu.model'; // Типы данных
+import db from '../db';
+import { Menu } from '../models/menu.model';
+import { DishTypeOrder } from '../enum/dishTypes.enum';
 
 /**
  * Получить список всех меню
  */
 export const getAllMenus = async (): Promise<Menu[]> => {
-  const menus = await db('menus').select('*');
+  const menus = await db('menus').select('*').orderBy('created_at', 'asc');
 
-  // Получение блюд для каждого меню
   const menusWithDishes = await Promise.all(
     menus.map(async (menu) => {
       const dishes = await db('menu_dishes')
         .join('dishes', 'menu_dishes.dish_id', 'dishes.id')
         .where('menu_dishes.menu_id', menu.id)
         .select('dishes.id', 'dishes.name', 'dishes.type', 'menu_dishes.created_at')
-        .orderBy('menu_dishes.created_at');
+        .orderByRaw(
+          `CASE 
+             ${DishTypeOrder.map((type, index) => `WHEN dishes.type = '${type}' THEN ${index}`).join(' ')}
+           END`
+        );
 
       return {
         ...menu,
@@ -51,6 +55,7 @@ export const getMenuByIdService = async (id: string): Promise<Menu | null> => {
  */
 export const createMenuService = async (menuData: Partial<Menu>): Promise<Menu> => {
   const [newMenu] = await db('menus').insert(menuData).returning('*');
+  newMenu.dishes = [];
   return newMenu;
 };
 

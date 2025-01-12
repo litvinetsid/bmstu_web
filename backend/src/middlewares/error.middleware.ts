@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 
-// Унифицированная обработка ошибок
 export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err.message);
 

@@ -1,5 +1,5 @@
 export interface Dish {
   id: string;
   name: string;
-  type: 'салат' | 'первое' | 'второе' | 'напиток' | 'десерт'; 
+  type: 'salad' | 'starter' | 'main course' | 'drink' | 'dessert';
 }

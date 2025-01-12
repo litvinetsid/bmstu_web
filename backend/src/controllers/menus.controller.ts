@@ -3,14 +3,14 @@ import { getAllMenus, getMenuByIdService, createMenuService, updateMenuService, 
 import { createResponse } from '../utils/response.util';
 
 export const getMenus = async (req: Request, res: Response) => {
-    try {
-      const menus = await getAllMenus();
-      res.status(200).json(createResponse(true, menus, { count: menus.length }));
-    } catch (error) {
-      res.status(500).json(createResponse(false, null, { message: 'Error fetching menus' }));
-    }
-  };
-  
+  try {
+    const menus = await getAllMenus();
+    res.status(200).json(createResponse(true, menus, { count: menus.length }));
+  } catch (error) {
+    res.status(500).json(createResponse(false, null, { message: 'Error fetching menus' }));
+  }
+};
+
 
 export const getMenuById = async (req: Request, res: Response) => {
   try {

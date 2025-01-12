@@ -5,7 +5,8 @@ import {
   addDishToMenuService,
   removeDishFromMenuService,
   moveDishBetweenMenusService,
-  checkDishConstraintsService,
+  updateDishService,
+  deleteDishService,
 } from '../services/dishes.service';
 import { createResponse } from '../utils/response.util';
 
@@ -27,17 +28,76 @@ export const createDish = async (req: Request, res: Response) => {
   }
 };
 
+export const updateDish = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const updatedDish = await updateDishService(id, req.body);
+    if (!updatedDish) {
+      return res.status(404).json(createResponse(false, null, { message: 'Dish not found' }));
+    }
+    res.status(200).json(createResponse(true, updatedDish, { message: 'Dish updated successfully' }));
+  } catch (error) {
+    res.status(500).json(createResponse(false, null, { message: 'Error updating dish' }));
+  }
+};
+
+export const deleteDish = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteDishService(id);
+    if (!result) {
+      return res.status(404).json(createResponse(false, null, { message: 'Dish not found' }));
+    }
+    res.status(200).json(createResponse(true, null, { message: 'Dish deleted successfully' }));
+  } catch (error) {
+    res.status(500).json(createResponse(false, null, { message: 'Error deleting dish' }));
+  }
+};
+
+
 export const addDishToMenu = async (req: Request, res: Response) => {
   try {
     const { menuId } = req.params;
     const { dishId } = req.body;
+
     const result = await addDishToMenuService(menuId, dishId);
+
     if (!result) {
-      return res.status(400).json(createResponse(false, null, { message: 'Cannot add dish to menu' }));
+      return res.status(400).json(
+        createResponse(false, null, {
+          message: 'Dish cannot be added to the menu due to constraints.',
+        })
+      );
     }
-    res.status(200).json(createResponse(true, null, { message: 'Dish added to menu successfully' }));
-  } catch (error) {
-    res.status(500).json(createResponse(false, null, { message: 'Error adding dish to menu' }));
+
+    res.status(200).json(
+      createResponse(true, result, {
+        message: 'Dish added to menu successfully',
+      })
+    );
+  } catch (error: any) {
+    if (error.message.includes('already exists')) {
+      return res.status(400).json(
+        createResponse(false, null, {
+          message: error.message,
+        })
+      );
+    }
+
+    if (error.message.includes('Menu or dish not found.')) {
+      return res.status(400).json(
+        createResponse(false, null, {
+          message: error.message,
+        })
+      );
+    }
+
+    res.status(500).json(
+      createResponse(false, null, {
+        message: 'Error adding dish to menu',
+        error: error.message,
+      })
+    );
   }
 };
 
@@ -65,19 +125,5 @@ export const moveDishBetweenMenus = async (req: Request, res: Response) => {
     res.status(200).json(createResponse(true, null, { message: 'Dish moved successfully' }));
   } catch (error) {
     res.status(500).json(createResponse(false, null, { message: 'Error moving dish between menus' }));
-  }
-};
-
-export const checkDishConstraints = async (req: Request, res: Response) => {
-  try {
-    const { menuId } = req.params;
-    const { dishId } = req.body;
-    const isValid = await checkDishConstraintsService(menuId, dishId);
-    if (!isValid) {
-      return res.status(400).json(createResponse(false, null, { message: 'Cannot add more dishes of this type to menu' }));
-    }
-    res.status(200).json(createResponse(true, null, { message: 'Dish constraints are valid' }));
-  } catch (error) {
-    res.status(500).json(createResponse(false, null, { message: 'Error checking dish constraints' }));
   }
 };

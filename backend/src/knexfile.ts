@@ -20,10 +20,8 @@ const config: { [key: string]: Knex.Config } = {
       min: 2,
       max: 10,
     },
-    debug: process.env.KNEX_DEBUG === 'true', // Включение отладки
+    debug: process.env.KNEX_DEBUG === 'true',
   },
 };
-
-// console.log('Knex configuration:', config.development);
 
 export default config;

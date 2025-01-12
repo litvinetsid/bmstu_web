@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Header />
     <router-view />
   </div>
 </template>
@@ -7,17 +8,21 @@
 <script lang="ts">
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import Header from './components/Header.vue';
 
 export default {
-   name: "App",
-   setup() {
+  name: "App",
+  components: {
+    Header,
+  },
+  setup() {
     const notify = () => {
       toast("Wow so easy !", {
         autoClose: 1000,
-      }); // ToastOptions
+      });
     }
     return { notify };
-   }
+  }
 };
 </script>
 

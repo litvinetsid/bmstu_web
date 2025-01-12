@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import { getMenus, getMenuById, createMenu, updateMenu, deleteMenu } from '../controllers/menus.controller';
+import {
+    moveDishBetweenMenus,
+  } from '../controllers/dishes.controller';
 
 const router = Router();
 
@@ -32,5 +35,11 @@ router.put('/:id', updateMenu);
  * Удалить меню по ID
  */
 router.delete('/:id', deleteMenu);
+
+/**
+ * POST /api/v1/menus/:fromMenuId/dishes/:dishId/move
+ * Переместить блюдо между меню
+ */
+router.post('/:fromMenuId/dishes/:dishId/move', moveDishBetweenMenus);
 
 export default router;

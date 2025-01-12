@@ -1,5 +1,5 @@
-import db from '../db'; // Подключение Knex
-import { Dish } from '../models/dish.model'; // Типы данных
+import db from '../db';
+import { Dish } from '../models/dish.model';
 import { DishType, isValidDishType } from '../enum/dishTypes.enum';
 
 /**
@@ -30,27 +30,60 @@ export const createDishService = async (dishData: Partial<Dish>): Promise<Dish |
 };
 
 /**
+ * Обновить блюдо
+ */
+export const updateDishService = async (dishId: string, updates: Partial<Dish>): Promise<Dish | null> => {
+  const { name, type } = updates;
+
+  if (type && !isValidDishType(type)) {
+    throw new Error(`Invalid dish type. Allowed types: ${Object.values(DishType).join(', ')}`);
+  }
+
+  const [updatedDish] = await db('dishes').where({ id: dishId }).update(updates).returning('*');
+  return updatedDish || null;
+};
+
+/**
+ * Удалить блюдо
+ */
+export const deleteDishService = async (dishId: string): Promise<boolean> => {
+  const deleted = await db('dishes').where({ id: dishId }).del();
+  return deleted > 0;
+};
+
+
+/**
  * Добавить блюдо в меню
  */
-export const addDishToMenuService = async (menuId: string, dishId: string): Promise<boolean> => {
-  // Проверяем существование меню и блюда
+export const addDishToMenuService = async (menuId: string, dishId: string): Promise<Dish | null> => {
   const menu = await db('menus').where({ id: menuId }).first();
   const dish = await db('dishes').where({ id: dishId }).first();
 
-  if (!menu || !dish) return false;
+  if (!menu || !dish) {
+    throw new Error('Menu or dish not found.');
+  }
 
-  // TODO: ПРОВЕРИТЬ ТИП БЛЮДА ПРИ ДОБАВЛЕНИИ!!!
-  // Проверяем, что блюдо еще не добавлено в это меню
+  const existingDishOfType = await db('menu_dishes')
+    .join('dishes', 'menu_dishes.dish_id', 'dishes.id')
+    .where({ menu_id: menuId, type: dish.type })
+    .first();
+
+  if (existingDishOfType) {
+    throw new Error(`A dish of type "${dish.type}" already exists in the menu.`);
+  }
+
   const dishExists = await db('menu_dishes')
     .where({ menu_id: menuId, dish_id: dishId })
     .first();
 
-  if (dishExists) return false;
+  if (dishExists) {
+    throw new Error('Dish is already added to this menu.');
+  }
 
-  // Добавляем блюдо в меню
   await db('menu_dishes').insert({ menu_id: menuId, dish_id: dishId });
-  return true;
+  return dish;
 };
+
 
 /**
  * Удалить блюдо из меню
@@ -69,29 +102,18 @@ export const moveDishBetweenMenusService = async (
   dishId: string
 ): Promise<boolean> => {
   const removed = await removeDishFromMenuService(fromMenuId, dishId);
-  if (!removed) return false;
+  if (!removed) {
+    return false;
+  }
 
-  const added = await addDishToMenuService(toMenuId, dishId);
-  return added;
+  try {
+    await addDishToMenuService(toMenuId, dishId);
+  } catch {
+    await addDishToMenuService(fromMenuId, dishId);
+    return false;
+  }
+
+  return true;
 };
 
-/**
- * Проверить ограничения на добавление блюда
- */
-export const checkDishConstraintsService = async (menuId: string, dishId: string): Promise<boolean> => {
-    const dish = await db('dishes').where({ id: dishId }).first();
-    if (!dish) return false;
-  
-    // Получение количества блюд данного типа в меню
-    const result = await db('menu_dishes')
-      .join('dishes', 'menu_dishes.dish_id', 'dishes.id')
-      .where({ menu_id: menuId, type: dish.type })
-      .count({ count: '*' }) // Агрегатная функция count
-      .first();
-  
-    const existingDishes = result ? Number(result.count) : 0; // Извлечение числа из результата
-    const dishTypeLimit = 1; // Максимум одного блюда каждого типа
-  
-    return existingDishes < dishTypeLimit;
-  };
-  
+
