@@ -1,5 +1,5 @@
 .PHONY: all clean init
-all: clean
+all:
 	docker-compose up --build
 
 clean:

@@ -29,7 +29,7 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       NODE_PORT: ${NODE_PORT}
-      VUE_PORT: ${VUE_PORT}
+      CORS_ORIGIN: ${CORS_ORIGIN}
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules

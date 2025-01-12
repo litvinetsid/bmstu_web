@@ -12,7 +12,7 @@ const PORT = Number(process.env.NODE_PORT) || 8080;
 app.use(express.json());
 
 app.use(cors({
-  origin: `http://localhost:${process.env.VUE_PORT}`,
+  origin: `${process.env.CORS_ORIGIN}`,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
