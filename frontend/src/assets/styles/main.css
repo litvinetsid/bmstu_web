@@ -1,4 +1,4 @@
-/* =========  Базовые стили  ========= */
+/* ========= Base styles  ========= */
 body {
   margin: 0;
   padding: 0;
@@ -32,7 +32,7 @@ a:hover {
   padding: 20px;
 }
 
-/* =========  Заголовок и футер  ========= */
+/* =========  Header and footer  ========= */
 .header {
   background-color: #42b983;
   color: #fff;
@@ -52,7 +52,7 @@ a:hover {
   bottom: 0;
 }
 
-/* =========  Шапка (header.vue)  ========= */
+/* =========  Header  ========= */
 .app-header {
   background-color: #333;
   color: white;
@@ -76,7 +76,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* =========  Кнопки  ========= */
+/* =========  Buttons  ========= */
 button {
   background-color: #42b983;
   color: #fff;
@@ -103,7 +103,7 @@ button:disabled {
   margin-bottom: 20px;
 }
 
-/* =========  Карточки и списки  ========= */
+/* =========  Cards and lists  ========= */
 .card {
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -127,7 +127,7 @@ button:disabled {
   border-bottom: none;
 }
 
-/* =========  Страницы MenuPage и DishPage  ========= */
+/* =========  Pages MenuPage and DishPage  ========= */
 .menu-page,
 .dish-page {
   padding: 20px;
@@ -139,7 +139,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* =========  Грид для меню  ========= */
+/* =========  Menu grid  ========= */
 .menu-grid {
   display: flex;
   flex-wrap: nowrap;
@@ -171,7 +171,7 @@ h1 {
   background-color: #888;
 }
 
-/* =========  Блок меню (MenuItem.vue)  ========= */
+/* =========  Menu items  ========= */
 .menu-item {
   background-color: #fff;
   border: 1px solid #ccc;
@@ -194,8 +194,28 @@ h1 {
   margin-bottom: 10px;
 }
 
-/* =========  Список блюд  =========
-   Вернули flex-раскладку и перенос строк */
+.menu-item.highlighted {
+  background-color: #f0f9f0;
+  border-color: #4caf50;
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: red;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 0;
+}
+
+.remove-btn:hover {
+  color: darkred;
+  background-color: rgba(255, 255, 255, 0);
+}
+
+/* =========  Dishes list  ========= */
 .dish-list {
   display: flex;
   flex-wrap: wrap;
@@ -230,30 +250,8 @@ h1 {
   font-style: italic;
 }
 
-/* =========  Хайлайт при перетаскивании  ========= */
-.menu-item.highlighted {
-  background-color: #f0f9f0;
-  border-color: #4caf50;
-}
 
-/* =========  Кнопка удаления блюда  ========= */
-.remove-btn {
-  background: transparent;
-  border: none;
-  color: red;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-left: 10px;
-  padding: 0;
-}
-
-.remove-btn:hover {
-  color: darkred;
-  background-color: rgba(255, 255, 255, 0);
-}
-
-/* =========  Модальное окно  ========= */
+/* =========  Modal window  ========= */
 .modal {
   position: fixed;
   top: 50%;
