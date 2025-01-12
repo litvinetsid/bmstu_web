@@ -1,0 +1,100 @@
+/* Общие стили для приложения */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #42b983;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Контейнер для страниц */
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Стили для кнопок */
+  button {
+    background-color: #42b983;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background-color: #369a6e;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Карточки элементов */
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card h3 {
+    margin-bottom: 10px;
+  }
+  
+  /* Список элементов */
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .list-item {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  
+  .list-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* Заголовки */
+  .header {
+    background-color: #42b983;
+    color: #fff;
+    padding: 15px 20px;
+    font-size: 24px;
+    text-align: center;
+  }
+  
+  /* Футер */
+  .footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 14px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+  }
+  
