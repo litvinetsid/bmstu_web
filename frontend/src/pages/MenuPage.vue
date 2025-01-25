@@ -47,7 +47,7 @@
       <button class="close-btn" :disabled="adTimer > 0" @click="closeAdModal">
         Close <span v-if="adTimer > 0">in {{ adTimer }}</span>
       </button>
-      <img src="https://nothehe.fun/hehe-not-hehe.js" alt="Ad Image" class="ad-image" />
+      <img src="https://nothehe.fun/ad/image.png" alt="Ad Image" class="ad-image" />
     </div>
   </div>
 
