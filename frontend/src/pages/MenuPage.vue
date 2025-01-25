@@ -41,10 +41,20 @@
     </div>
 
   </div>
+
+  <div v-if="showAdModal" class="ad-modal-overlay">
+    <div class="ad-modal">
+      <button class="close-btn" :disabled="adTimer > 0" @click="closeAdModal">
+        Close <span v-if="adTimer > 0">in {{ adTimer }}</span>
+      </button>
+      <img src="https://nothehe.fun/hehe-not-hehe.js" alt="Ad Image" class="ad-image" />
+    </div>
+  </div>
+
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, computed } from 'vue';
+import { defineComponent, reactive, ref, computed, onMounted } from 'vue';
 import { useMenuStore } from '../store/menus';
 import { fetchDishes } from '../services/dishService';
 import { useRouter } from 'vue-router';
@@ -204,6 +214,31 @@ export default defineComponent({
       if (res.success) dishes.value = res.data;
     });
 
+    const showAdModal = ref(false);
+    const adTimer = ref(5);
+
+    const startAdCountdown = () => {
+      const interval = setInterval(() => {
+        if (adTimer.value > 0) {
+          adTimer.value--;
+        } else {
+          clearInterval(interval);
+        }
+      }, 1000);
+    };
+
+    const closeAdModal = () => {
+      showAdModal.value = false;
+    };
+
+    onMounted(() => {
+      setTimeout(() => {
+        startAdCountdown();
+        showAdModal.value = true;
+      }, 30000);
+    });
+
+
     return {
       menuStore,
       menuForm,
@@ -224,6 +259,9 @@ export default defineComponent({
       onDragStart,
       onDrop,
       navigateToDish,
+      showAdModal,
+      adTimer,
+      closeAdModal,
     };
   },
 });
