@@ -30,8 +30,6 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       NODE_PORT: ${NODE_PORT}
       CORS_ORIGIN: ${CORS_ORIGIN}
-      SSL_KEY_PATH: ${SSL_KEY_PATH}
-      SSL_CERT_PATH: ${SSL_CERT_PATH}
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules

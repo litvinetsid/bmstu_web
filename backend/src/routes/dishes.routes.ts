@@ -41,11 +41,11 @@ router.delete('/:id', deleteDish);
 router.post('/menus/:menuId/dishes', addDishToMenu);
 
 /**
- * DELETE /api/v1/dishes/:menuId/dishes
+ * DELETE /api/v1/dishes/menus/:menuId/dishes/:dishId
  * Удалить блюдо из меню
  */
 
-router.post('/menus/:menuId/dishes', removeDishFromMenu);
+router.delete('/menus/:menuId/dishes/:dishId', removeDishFromMenu);
 
 
 
