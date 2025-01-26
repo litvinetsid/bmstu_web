@@ -3,8 +3,8 @@
     <nav>
       <ul>
         <li><a href="/">Home</a></li>
-        <li><a href="/menus">Menus</a></li>
-        <li><a href="/dishes">Dishes</a></li>
+        <li><a href="/refuellers">Refuellers</a></li>
+        <li><a href="/issues">Issues</a></li>
       </ul>
     </nav>
   </header>

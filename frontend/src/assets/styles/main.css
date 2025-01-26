@@ -98,8 +98,8 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.menu-page center button,
-.dish-page center button {
+.refueller-page center button,
+.issue-page center button {
   margin-bottom: 20px;
 }
 
@@ -127,9 +127,9 @@ button:disabled {
   border-bottom: none;
 }
 
-/* =========  Pages MenuPage and DishPage  ========= */
-.menu-page,
-.dish-page {
+/* =========  Pages RefuellerPage and IssuePage  ========= */
+.refueller-page,
+.issue-page {
   padding: 20px;
 }
 
@@ -139,8 +139,8 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* =========  Menu grid  ========= */
-.menu-grid {
+/* =========  Refueller grid  ========= */
+.refueller-grid {
   display: flex;
   flex-wrap: nowrap;
   gap: 20px;
@@ -158,21 +158,21 @@ h1 {
   box-sizing: border-box;
 }
 
-.menu-grid::-webkit-scrollbar {
+.refueller-grid::-webkit-scrollbar {
   height: 8px; 
 }
 
-.menu-grid::-webkit-scrollbar-thumb {
+.refueller-grid::-webkit-scrollbar-thumb {
   background-color: #bbb; 
   border-radius: 4px;
 }
 
-.menu-grid::-webkit-scrollbar-thumb:hover {
+.refueller-grid::-webkit-scrollbar-thumb:hover {
   background-color: #888;
 }
 
-/* =========  Menu items  ========= */
-.menu-item {
+/* =========  Refueller items  ========= */
+.refueller-item {
   background-color: #fff;
   border: 1px solid #ccc;
   box-sizing: border-box;
@@ -183,18 +183,18 @@ h1 {
   text-align: center;
 }
 
-.menu-item:hover {
+.refueller-item:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.menu-item h3 {
+.refueller-item h3 {
   font-size: 18px;
   color: #333;
   margin-bottom: 10px;
 }
 
-.menu-item.highlighted {
+.refueller-item.highlighted {
   background-color: #f0f9f0;
   border-color: #4caf50;
 }
@@ -215,8 +215,8 @@ h1 {
   background-color: rgba(255, 255, 255, 0);
 }
 
-/* =========  Dishes list  ========= */
-.dish-list {
+/* =========  Issues list  ========= */
+.issue-list {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -230,7 +230,7 @@ h1 {
   background-color: #f4f4f4;
 }
 
-.dish-list li {
+.issue-list li {
   padding: 8px;
   margin: 5px 0;
   background-color: #ffffff;
@@ -240,11 +240,11 @@ h1 {
   transition: background-color 0.3s;
 }
 
-.dish-list li:hover {
+.issue-list li:hover {
   background-color: #f0f8ff;
 }
 
-.dish-list .empty {
+.issue-list .empty {
   color: #888;
   text-align: center;
   font-style: italic;
@@ -316,11 +316,11 @@ h1 {
   background-color: #d32f2f;
 }
 
-.menu-item button {
+.refueller-item button {
   margin: 5px;
 }
 
-.add-dish-button {
+.add-issue-button {
   background-color: #007bff;
   color: #fff;
   border: none;

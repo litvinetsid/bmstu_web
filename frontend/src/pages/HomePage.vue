@@ -2,10 +2,10 @@
   <div class="home-page">
     <h1>Welcome to Restaurant Dashboard</h1>
     <p>
-      <router-link to="/menus">Go to Menus</router-link>
+      <router-link to="/refuellers">Go to Refuellers</router-link>
     </p>
     <p>
-      <router-link to="/dishes">Go to Dishes</router-link>
+      <router-link to="/issues">Go to Issues</router-link>
     </p>
   </div>
 </template>

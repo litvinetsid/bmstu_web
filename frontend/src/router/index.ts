@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../pages/HomePage.vue';
-import MenuPage from '../pages/MenuPage.vue';
-import DishPage from '../pages/DishPage.vue';
+import RefuellerPage from '../pages/RefuellerPage.vue';
+import IssuePage from '../pages/IssuePage.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
-  { path: '/menus', name: 'Menus', component: MenuPage },
-  { path: '/dishes', name: 'Dishes', component: DishPage },
-  { path: '/dishes/:id', name: 'DishEdit', component: DishPage },
+  { path: '/refuellers', name: 'Refuellers', component: RefuellerPage },
+  { path: '/issues', name: 'Issues', component: IssuePage },
+  { path: '/issues/:id', name: 'IssueEdit', component: IssuePage },
 ];
 
 const router = createRouter({

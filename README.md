@@ -1,6 +1,6 @@
-# Restaurant Menu Management System
+# Restaurant Refueller Management System
 
-A Vue 3 application for managing restaurant menus. The project allows users to organize dishes into menus, add, edit, and delete dishes. 
+A Vue 3 application for managing restaurant refuellers. The project allows users to organize issues into refuellers, add, edit, and delete issues. 
 
 ---
 
@@ -18,13 +18,13 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
 
 ## Features
 
-- **Admin Dashboard**: Manage business lunch menus and dishes via an graphic interface.
-- **Dish Management**: Create, update, delete, and assign dishes to menus. Validate dish types to prevent duplicates within a menu.
-- **Menu Management**: Create, edit, delete menus by day and option (e.g., `Monday - Option 1`), with sorted dish types.
-- **Drag-and-Drop**: Easily move dishes between menus with live feedback and sorting by type.
-- **Dynamic Routing**: View or edit dishes via `/dishes/:id`.
+- **Admin Dashboard**: Manage business lunch refuellers and issues via an graphic interface.
+- **Issue Management**: Create, update, delete, and assign issues to refuellers. Validate issue types to prevent duplicates within a refueller.
+- **Refueller Management**: Create, edit, delete refuellers by day and option (e.g., `Monday - Option 1`), with sorted issue types.
+- **Drag-and-Drop**: Easily move issues between refuellers with live feedback and sorting by type.
+- **Dynamic Routing**: View or edit issues via `/issues/:id`.
 - **Validation & Notifications**: Real-time validation and toast notifications for all actions.
-- **Responsive Design**: Horizontal and vertical scrolling optimized for menus and dishes.
+- **Responsive Design**: Horizontal and vertical scrolling optimized for refuellers and issues.
 - **Tech Stack**: Vue 3 (Frontend), Node.js + Express.js (Backend), PostgreSQL (Database), REST-like API.
 
 ---
@@ -68,8 +68,8 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
 
 1. Open the application in your browser: `http://localhost:3000/`.
 2. Navigate through the following key sections:
-   - **Dishes**: View and manage dishes.
-   - **Menus**: Organize dishes into menus with drag-and-drop functionality.
+   - **Issues**: View and manage issues.
+   - **Refuellers**: Organize issues into refuellers with drag-and-drop functionality.
 
 ---
 
@@ -79,22 +79,22 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
 .
 ├── backend
 │   ├── src
-│   │   ├── controllers      # Handles HTTP requests (e.g., dishes.controller.ts, menus.controller.ts)
-│   │   ├── services         # Application logic (e.g., dishes.service.ts, menus.service.ts)
+│   │   ├── controllers      # Handles HTTP requests (e.g., issues.controller.ts, refuellers.controller.ts)
+│   │   ├── services         # Application logic (e.g., issues.service.ts, refuellers.service.ts)
 │   │   ├── migrations       # Database schema migrations
-│   │   ├── routes           # API routes (e.g., dishes.routes.ts, menus.routes.ts)
-│   │   ├── models           # Database models (e.g., dish.model.ts, menu.model.ts)
+│   │   ├── routes           # API routes (e.g., issues.routes.ts, refuellers.routes.ts)
+│   │   ├── models           # Database models (e.g., issue.model.ts, refueller.model.ts)
 │   │   └── utils            # Utility functions (e.g., response.util.ts)
 │   ├── Dockerfile           # Backend Docker configuration
 │   ├── knexfile.ts          # Knex.js configuration
 │   └── tsconfig.json        # TypeScript configuration
 ├── frontend
 │   ├── src
-│   │   ├── components       # Reusable Vue components (e.g., DishItem.vue, MenuItem.vue)
-│   │   ├── pages            # Application views (e.g., DishPage.vue, MenuPage.vue)
+│   │   ├── components       # Reusable Vue components (e.g., IssueItem.vue, RefuellerItem.vue)
+│   │   ├── pages            # Application views (e.g., IssuePage.vue, RefuellerPage.vue)
 │   │   ├── router           # Vue Router configuration
 │   │   ├── store            # State management (e.g., Pinia stores)
-│   │   └── services         # API service calls (e.g., dishService.ts, menuService.ts)
+│   │   └── services         # API service calls (e.g., issueService.ts, refuellerService.ts)
 │   ├── public
 │   │   └── index.html       # Entry point for the frontend
 │   ├── Dockerfile           # Frontend Docker configuration
@@ -112,13 +112,13 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
 
 #### Endpoints
 
-## Dishes API
+## Issues API
 
-### **Get All Dishes**
+### **Get All Issues**
 
-**Endpoint:** `GET /api/v1/dishes`
+**Endpoint:** `GET /api/v1/issues`
 
-**Description:** Retrieve a list of all dishes.
+**Description:** Retrieve a list of all issues.
 
 **Response:**
 ```json
@@ -140,11 +140,11 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
 
 ---
 
-### **Create a Dish**
+### **Create a Issue**
 
-**Endpoint:** `POST /api/v1/dishes`
+**Endpoint:** `POST /api/v1/issues`
 
-**Description:** Add a new dish.
+**Description:** Add a new issue.
 
 **Request:**
 ```json
@@ -165,18 +165,18 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
     "created_at": "2023-12-10T12:34:56Z"
   },
   "meta": {
-    "message": "Dish created successfully"
+    "message": "Issue created successfully"
   }
 }
 ```
 
 ---
 
-### **Update a Dish**
+### **Update a Issue**
 
-**Endpoint:** `PUT /api/v1/dishes/:id`
+**Endpoint:** `PUT /api/v1/issues/:id`
 
-**Description:** Update an existing dish.
+**Description:** Update an existing issue.
 
 **Request:**
 ```json
@@ -197,18 +197,18 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
     "created_at": "2023-12-10T12:34:56Z"
   },
   "meta": {
-    "message": "Dish updated successfully"
+    "message": "Issue updated successfully"
   }
 }
 ```
 
 ---
 
-### **Delete a Dish**
+### **Delete a Issue**
 
-**Endpoint:** `DELETE /api/v1/dishes/:id`
+**Endpoint:** `DELETE /api/v1/issues/:id`
 
-**Description:** Remove a dish.
+**Description:** Remove a issue.
 
 **Response:**
 ```json
@@ -216,23 +216,23 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
   "success": true,
   "data": null,
   "meta": {
-    "message": "Dish deleted successfully"
+    "message": "Issue deleted successfully"
   }
 }
 ```
 
 ---
 
-### **Add Dish to Menu**
+### **Add Issue to Refueller**
 
-**Endpoint:** `POST /api/v1/dishes/menus/:menuId/dishes`
+**Endpoint:** `POST /api/v1/issues/refuellers/:refuellerId/issues`
 
-**Description:** Add a dish to a menu.
+**Description:** Add a issue to a refueller.
 
 **Request:**
 ```json
 {
-  "dishId": 1
+  "issueId": 1
 }
 ```
 
@@ -241,23 +241,23 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
 {
   "success": true,
   "data": {
-    "menu_id": 1,
-    "dish_id": 1,
+    "refuellers_id": 1,
+    "issues_id": 1,
     "created_at": "2023-12-10T12:34:56Z"
   },
   "meta": {
-    "message": "Dish added to menu successfully"
+    "message": "Issue added to refueller successfully"
   }
 }
 ```
 
 ---
 
-### **Remove Dish from Menu**
+### **Remove Issue from Refueller**
 
-**Endpoint:** `DELETE /api/v1/dishes/menus/:menuId/dishes/:dishId`
+**Endpoint:** `DELETE /api/v1/issues/refuellers/:refuellerId/issues/:issueId`
 
-**Description:** Remove a dish from a menu.
+**Description:** Remove a issue from a refueller.
 
 **Response:**
 ```json
@@ -265,20 +265,20 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
   "success": true,
   "data": null,
   "meta": {
-    "message": "Dish removed from menu successfully"
+    "message": "Issue removed from refueller successfully"
   }
 }
 ```
 
 ---
 
-## Menus API
+## Refuellers API
 
-### **Get All Menus**
+### **Get All Refuellers**
 
-**Endpoint:** `GET /api/v1/menus`
+**Endpoint:** `GET /api/v1/refuellers`
 
-**Description:** Retrieve all menus.
+**Description:** Retrieve all refuellers.
 
 **Response:**
 ```json
@@ -300,11 +300,11 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
 
 ---
 
-### **Get a Menu by ID**
+### **Get a Refueller by ID**
 
-**Endpoint:** `GET /api/v1/menus/:id`
+**Endpoint:** `GET /api/v1/refuellers/:id`
 
-**Description:** Retrieve details of a specific menu.
+**Description:** Retrieve details of a specific refueller.
 
 **Response:**
 ```json
@@ -315,7 +315,7 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
     "day": "Monday",
     "variant": "Option 1",
     "created_at": "2023-12-10T12:34:56Z",
-    "dishes": [
+    "issues": [
       {
         "id": 1,
         "name": "Caesar Salad",
@@ -329,11 +329,11 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
 
 ---
 
-### **Create a Menu**
+### **Create a Refueller**
 
-**Endpoint:** `POST /api/v1/menus`
+**Endpoint:** `POST /api/v1/refuellers`
 
-**Description:** Add a new menu.
+**Description:** Add a new refueller.
 
 **Request:**
 ```json
@@ -354,18 +354,18 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
     "created_at": "2023-12-10T12:34:56Z"
   },
   "meta": {
-    "message": "Menu created successfully"
+    "message": "Refueller created successfully"
   }
 }
 ```
 
 ---
 
-### **Update a Menu**
+### **Update a Refueller**
 
-**Endpoint:** `PUT /api/v1/menus/:id`
+**Endpoint:** `PUT /api/v1/refuellers/:id`
 
-**Description:** Update an existing menu.
+**Description:** Update an existing refueller.
 
 **Request:**
 ```json
@@ -386,18 +386,18 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
     "created_at": "2023-12-10T12:34:56Z"
   },
   "meta": {
-    "message": "Menu updated successfully"
+    "message": "Refueller updated successfully"
   }
 }
 ```
 
 ---
 
-### **Delete a Menu**
+### **Delete a Refueller**
 
-**Endpoint:** `DELETE /api/v1/menus/:id`
+**Endpoint:** `DELETE /api/v1/refuellers/:id`
 
-**Description:** Remove a menu.
+**Description:** Remove a refueller.
 
 **Response:**
 ```json
@@ -405,23 +405,23 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
   "success": true,
   "data": null,
   "meta": {
-    "message": "Menu deleted successfully"
+    "message": "Refueller deleted successfully"
   }
 }
 ```
 
 ---
 
-### **Move Dish Between Menus**
+### **Move Issue Between Refuellers**
 
-**Endpoint:** `POST /api/v1/menus/:fromMenuId/dishes/:dishId/move`
+**Endpoint:** `POST /api/v1/refuellers/:fromRefuellerId/issues/:issueId/move`
 
-**Description:** Move a dish from one menu to another.
+**Description:** Move a issue from one refueller to another.
 
 **Request:**
 ```json
 {
-  "toMenuId": 2
+  "toRefuellerId": 2
 }
 ```
 
@@ -431,7 +431,7 @@ A Vue 3 application for managing restaurant menus. The project allows users to o
   "success": true,
   "data": null,
   "meta": {
-    "message": "Dish moved successfully"
+    "message": "Issue moved successfully"
   }
 }
 ```

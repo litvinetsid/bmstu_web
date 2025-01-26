@@ -1,8 +1,10 @@
 <template>
-  <div class="dish-item card" @mouseover="hover = true" @mouseleave="hover = false">
-    <button class="remove-btn" @click.stop="deleteDish">×</button>
-    <h4>{{ dish.name }}</h4>
-    <p>Type: {{ dish.type }}</p>
+  <div class="issue-item card" @mouseover="hover = true" @mouseleave="hover = false">
+    <button class="remove-btn" @click.stop="deleteIssue">×</button>
+    <h4>{{ issue.name }}</h4>
+    <p>Number: {{ issue.number }}</p>
+    <p>Fuel: {{ issue.fuel }}</p>
+    <p>Volume: {{ issue.volume }}</p>
   </div>
 </template>
 
@@ -11,32 +13,34 @@ import { defineComponent, ref } from 'vue';
 import type { PropType } from 'vue';
 
 export default defineComponent({
-  name: 'DishItem',
+  name: 'IssueItem',
   props: {
-    dish: {
+    issue: {
       type: Object as PropType<{
         id: string;
-        name: string;
-        type: string;
+        name: string; 
+        fuel: string; 
+        volume: string; 
+        number: string
       }>,
       required: true,
     },
   },
-  emits: ['delete-dish'],
+  emits: ['delete-issue'],
   setup(props, { emit }) {
     const hover = ref(false);
 
-    const deleteDish = () => {
-      emit('delete-dish', props.dish.id);
+    const deleteIssue = () => {
+      emit('delete-issue', props.issue.id);
     };
 
-    return { hover, deleteDish };
+    return { hover, deleteIssue };
   },
 });
 </script>
 
 <style scoped>
-.dish-item {
+.issue-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,18 +50,18 @@ export default defineComponent({
   transition: box-shadow 0.3s, transform 0.3s;
 }
 
-.dish-item:hover {
+.issue-item:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: translateY(-3px);
 }
 
-.dish-item h4 {
+.issue-item h4 {
   margin-bottom: 8px;
   font-size: 18px;
   color: #333;
 }
 
-.dish-item p {
+.issue-item p {
   margin: 0;
   color: #555;
   font-size: 14px;

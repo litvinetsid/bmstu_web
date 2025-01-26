@@ -1,43 +1,48 @@
 exports.up = function (knex) {
   return knex.schema
-    .createTable('menus', (table) => {
+    .createTable('refuellers', (table) => {
       table.increments('id').primary();
-      table.string('day', 50).notNullable();
-      table.string('variant', 50).notNullable();
+      table.string('name', 50).notNullable();
+      table
+        .enu('fuel', ['92', '95', '98', '100', 'diesel'])
+        .notNullable();
+      table.string('vol', 255).notNullable();
       table.timestamp('created_at').defaultTo(knex.fn.now());
     })
-    .createTable('dishes', (table) => {
+    .createTable('issues', (table) => {
       table.increments('id').primary();
       table.string('name', 255).notNullable();
+      table.string('number', 255).notNullable();
       table
-        .enu('type', ['salad', 'starter', 'main course', 'drink', 'dessert'])
+        .enu('fuel', ['92', '95', '98', '100', 'diesel'])
         .notNullable();
+      table.string('volume', 255).notNullable();
       table.timestamp('created_at').defaultTo(knex.fn.now());
     })
-    .createTable('menu_dishes', (table) => {
+    .createTable('refuellers_issues', (table) => {
       table.increments('id').primary();
       table
-        .integer('menu_id')
+        .integer('refuellers_id')
         .unsigned()
         .notNullable()
         .references('id')
-        .inTable('menus')
+        .inTable('refuellers')
         .onDelete('CASCADE');
       table
-        .integer('dish_id')
+        .integer('issues_id')
         .unsigned()
         .notNullable()
         .references('id')
-        .inTable('dishes')
+        .inTable('issues')
         .onDelete('CASCADE');
       table.timestamp('created_at').defaultTo(knex.fn.now());
-      table.unique(['menu_id', 'dish_id']);
+      table.unique(['refuellers_id', 'issues_id']);
     });
 };
 
 exports.down = function (knex) {
   return knex.schema
-    .dropTableIfExists('menu_dishes')
-    .dropTableIfExists('dishes')
-    .dropTableIfExists('menus');
+    .dropTableIfExists('refuellers_issues')
+    .dropTableIfExists('issues')
+    .dropTableIfExists('refuellers');
 };

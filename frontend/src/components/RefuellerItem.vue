@@ -1,24 +1,24 @@
 <template>
-  <div class="menu-item" :class="{ 'highlighted': isHighlighted }">
-    <h3>{{ menu.day }} - {{ menu.variant }}</h3>
-    <ul class="dish-list" @dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop="onDrop(menu.id)">
+  <div class="refueller-item" :class="{ 'highlighted': isHighlighted }">
+    <h3>{{ refueller.day }} - {{ refueller.variant }}</h3>
+    <ul class="issue-list" @dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop="onDrop(refueller.id)">
       <li
-        v-for="dish in menu.dishes"
-        :key="dish.id"
+        v-for="issue in refueller.issues"
+        :key="issue.id"
         draggable="true"
-        @dragstart="onDragStart(dish, menu.id)"
-        @click="navigateToDish(dish.id)"
-        class="clickable-dish"
+        @dragstart="onDragStart(issue, refueller.id)"
+        @click="navigateToIssue(issue.id)"
+        class="clickable-issue"
       >
-        {{ dish.name }} ({{ dish.type }})
-        <button class="remove-btn" @click.stop="removeDish(menu.id, dish.id)">×</button>
+        {{ issue.name }} ({{ issue.type }})
+        <button class="remove-btn" @click.stop="removeIssue(refueller.id, issue.id)">×</button>
       </li>
-      <li v-if="menu.dishes.length === 0" class="empty">
-        Drop dishes here
+      <li v-if="refueller.issues.length === 0" class="empty">
+        Drop issues here
       </li>
     </ul>
-    <button @click="editMenu(menu)">Edit</button>
-    <button @click="deleteMenu(menu.id)">Delete</button>
+    <button @click="editRefueller(refueller)">Edit</button>
+    <button @click="deleteRefueller(refueller.id)">Delete</button>
   </div>
 </template>
 
@@ -28,9 +28,9 @@ import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'MenuItem',
+  name: 'RefuellerItem',
   props: {
-    menu: {
+    refueller: {
       type: Object,
       required: true,
     },
@@ -42,15 +42,15 @@ export default defineComponent({
       type: Function,
       required: true,
     },
-    removeDish: {
+    removeIssue: {
       type: Function,
       required: true,
     },
-    editMenu: {
+    editRefueller: {
       type: Function,
       required: true,
     },
-    deleteMenu: {
+    deleteRefueller: {
       type: Function,
       required: true,
     },
@@ -67,13 +67,13 @@ export default defineComponent({
       isHighlighted.value = false;
     };
 
-    const onDrop = (menuId: string) => {
+    const onDrop = (refuellerId: string) => {
       isHighlighted.value = false;
-      props.onDrop(menuId);
+      props.onDrop(refuellerId);
     };
 
-    const navigateToDish = (dishId: string) => {
-      router.push(`/dishes/${dishId}`);
+    const navigateToIssue = (issueId: string) => {
+      router.push(`/issues/${issueId}`);
     };
 
     return {
@@ -81,14 +81,14 @@ export default defineComponent({
       onDragOver,
       onDragLeave,
       onDrop,
-      navigateToDish,
+      navigateToIssue,
     };
   },
 });
 </script>
 
 <style scoped>
-.menu-item {
+.refueller-item {
   border: 1px solid #ccc;
   box-sizing: border-box;
   padding: 10px;
@@ -98,19 +98,19 @@ export default defineComponent({
   transition: background-color 0.3s, border-color 0.3s;
 }
 
-.menu-item.highlighted {
+.refueller-item.highlighted {
   background-color: #f0f9f0;
   border-color: #4caf50;
 }
 
-.dish-list {
+.issue-list {
   min-height: 50px;
   padding: 10px;
   border: 1px dashed #ccc;
   transition: border-color 0.3s;
 }
 
-.dish-list .empty {
+.issue-list .empty {
   color: gray;
   text-align: center;
   font-style: italic;
@@ -131,12 +131,12 @@ export default defineComponent({
   color: darkred;
 }
 
-.clickable-dish {
+.clickable-issue {
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.clickable-dish:hover {
+.clickable-issue:hover {
   background-color: #f9f9f9;
 }
 </style>
