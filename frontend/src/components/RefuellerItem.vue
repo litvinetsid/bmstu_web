@@ -1,6 +1,6 @@
 <template>
   <div class="refueller-item" :class="{ 'highlighted': isHighlighted }">
-    <h3>{{ refueller.day }} - {{ refueller.variant }}</h3>
+    <h3>{{ refueller.name }}</h3>
     <ul class="issue-list" @dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop="onDrop(refueller.id)">
       <li
         v-for="issue in refueller.issues"
@@ -10,7 +10,7 @@
         @click="navigateToIssue(issue.id)"
         class="clickable-issue"
       >
-        {{ issue.name }} ({{ issue.type }})
+        {{ issue.name }} ({{ issue.volume }})
         <button class="remove-btn" @click.stop="removeIssue(refueller.id, issue.id)">×</button>
       </li>
       <li v-if="refueller.issues.length === 0" class="empty">

@@ -22,6 +22,9 @@ export const removeIssueFromRefueller = async (refuellerId: string, issueId: str
 };
 
 export const createIssue = async (issue: { name: string; fuel: string; volume: string; number: string }) => {
+  const randomMultiplier = Math.random() * (0.95 - 0.3) + 0.3;
+  const adjustedVolume = (parseFloat(issue.volume) * randomMultiplier).toFixed(1);
+  issue.volume = adjustedVolume.toString();
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -38,6 +41,9 @@ export const deleteIssueService = async (issueId: string) => {
 };
 
 export const updateIssueService = async (issueId: string, issue: { name: string; fuel: string; volume: string; number: string }) => {
+  const randomMultiplier = Math.random() * (0.95 - 0.3) + 0.3;
+  const adjustedVolume = (parseFloat(issue.volume) * randomMultiplier).toFixed(1);
+  issue.volume = adjustedVolume.toString();
   const response = await fetch(`${API_URL}/${issueId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
