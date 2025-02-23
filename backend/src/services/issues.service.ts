@@ -50,15 +50,28 @@ export const addIssueToRefuellerService = async (refuellerId: string, issueId: s
     throw new Error('Refueller or issue not found.');
   }
 
-  // const existingIssueOfType = await db('refuellers_issues')
-  //   .join('issues', 'refuellers_issues.issues_id', 'issues.id')
-  //   .where({ refuellers_id: refuellerId, fuel: issue.fuel })
-  //   .first();
+  // Проверка типа топлива
+  if (refueller.fuel !== issue.fuel) {
+    throw new Error(`Fuel type mismatch: Refueller uses "${refueller.fuel}", but issue requires "${issue.fuel}".`);
+  }
 
-  // if (existingIssueOfType) {
-  //   throw new Error(`A issue of type "${issue.type}" already exists in the refueller.`);
-  // }
+  // Получение суммарного объема топлива всех задач заправщика
+  const totalIssuesVolumeResult = await db('refuellers_issues')
+    .join('issues', 'refuellers_issues.issues_id', 'issues.id')
+    .where('refuellers_issues.refuellers_id', refuellerId)
+    .select(db.raw('SUM(CAST(issues.volume AS FLOAT)) as total_volume')) // Преобразуем строку в число
+    .first();
 
+  const totalIssuesVolume = parseFloat(totalIssuesVolumeResult?.total_volume || '0');
+  const issueVolume = parseFloat(issue.volume); // Преобразуем строку в число
+
+  // Проверка, что суммарный объем топлива (включая новую задачу) не превышает доступный объем заправщика
+  const refuellerVolume = parseFloat(refueller.vol); // Преобразуем строку в число
+  if (totalIssuesVolume + issueVolume > refuellerVolume) {
+    throw new Error(`Adding this issue would exceed the refueller's fuel capacity. Available: ${refueller.vol}, Required: ${totalIssuesVolume + issueVolume}.`);
+  }
+
+  // Проверка, что задача уже не добавлена к заправщику
   const issueExists = await db('refuellers_issues')
     .where({ refuellers_id: refuellerId, issues_id: issueId })
     .first();
@@ -67,6 +80,7 @@ export const addIssueToRefuellerService = async (refuellerId: string, issueId: s
     throw new Error('Issue is already added to this refueller.');
   }
 
+  // Добавление задачи к заправщику
   await db('refuellers_issues').insert({ refuellers_id: refuellerId, issues_id: issueId });
   return issue;
 };

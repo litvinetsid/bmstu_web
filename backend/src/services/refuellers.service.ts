@@ -1,5 +1,6 @@
 import db from '../db';
 import { Refueller } from '../models/refueller.model';
+import { Issue } from '../models/issue.model';
 import { IssueTypeOrder } from '../enum/issueTypes.enum';
 
 /**
@@ -56,7 +57,46 @@ export const createRefuellerService = async (refuellerData: Partial<Refueller>):
 /**
  * Обновить существующее меню
  */
+const validateRefuellerIssues = async (refuellerId: string, issues: Issue[]): Promise<boolean> => {
+  const refueller = await db('refuellers').where({ id: refuellerId }).first();
+
+  if (!refueller) {
+    throw new Error('Refueller not found');
+  }
+
+  // Проверка типа топлива
+  const fuelTypeMismatch = issues.some(issue => issue.fuel !== refueller.fuel);
+  if (fuelTypeMismatch) {
+    throw new Error('Fuel type mismatch between refueller and issues');
+  }
+
+  // Суммарное количество топлива всех задач
+  const totalIssuesVolume = issues.reduce((sum, issue) => sum + parseFloat(issue.value), 0);
+
+  // Проверка, что суммарное количество топлива не превышает доступное у заправщика
+  if (totalIssuesVolume > parseFloat(refueller.vol)) {
+    throw new Error('Total fuel volume of issues exceeds refueller capacity');
+  }
+
+  return true;
+};
+
+/**
+ * Обновить существующего заправщика
+ */
 export const updateRefuellerService = async (id: string, updates: Partial<Refueller>): Promise<Refueller | null> => {
+  const refueller = await db('refuellers').where({ id }).first();
+
+  if (!refueller) {
+    throw new Error('Refueller not found');
+  }
+
+  // Если обновляются задачи (issues), выполняем проверку
+  if (updates.issues) {
+    await validateRefuellerIssues(id, updates.issues);
+  }
+
+  // Обновляем заправщика
   const [updatedRefueller] = await db('refuellers').where({ id }).update(updates).returning('*');
   return updatedRefueller || null;
 };
